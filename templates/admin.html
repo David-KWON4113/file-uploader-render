@@ -1,27 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>파일 업로드 목록</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 2rem; background: #f5f5f5; }
-        h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; margin-top: 2rem; }
-        ul { list-style: none; padding-left: 0; }
-        li { background: #fff; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 6px; }
-        a { text-decoration: none; color: #007BFF; }
-        a:hover { text-decoration: underline; }
-    </style>
+  <meta charset="utf-8">
+  <title>관리자 페이지</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>📂 업로드된 파일 목록</h1>
-    {% for date, files in grouped_files.items() %}
-        <h2>{{ date }}</h2>
-        <ul>
-            {% for file in files %}
-                <li><a href="{{ url_for('download_file', filename=file) }}">{{ file }}</a></li>
-            {% endfor %}
+<body class="p-4 bg-light">
+  <div class="container">
+    <h2 class="mb-4">📁 업로드된 파일 목록</h2>
+
+    {% for folder, files in grouped_folders.items() %}
+      <div class="mb-4">
+        <h5>{{ folder }}</h5>
+        <a href="{{ url_for('download_zip', folder_name=folder) }}" class="btn btn-sm btn-outline-secondary mb-2">압축 다운로드</a>
+        <ul class="list-group">
+          {% for file in files %}
+            <li class="list-group-item">
+              <a href="{{ url_for('download_file', filename=folder + '/' + file) }}">{{ file }}</a>
+            </li>
+          {% endfor %}
         </ul>
+      </div>
     {% endfor %}
+  </div>
 </body>
 </html>
