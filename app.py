@@ -54,6 +54,9 @@ def admin():
 
     return render_template('admin.html', grouped_files=grouped)
 
+@app.route('/uploads/<filename>')
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run()
