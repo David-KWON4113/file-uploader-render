@@ -43,15 +43,16 @@ def admin():
         return render_template('admin_login.html')
 
     files = os.listdir(app.config['UPLOAD_FOLDER'])
-    files.sort(key=lambda f: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f)), reverse=True)
-
-    grouped_files = defaultdict(list)
-    for f in files:
+    
+    # 파일을 날짜별로 묶기
+    grouped = {}
+    for f in sorted(files, reverse=True):
         timestamp = os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f))
-        dt = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:00')
-        grouped_files[dt].append(f)
+        dt = datetime.fromtimestamp(timestamp)
+        key = dt.strftime('%Y-%m-%d %H시')
+        grouped.setdefault(key, []).append(f)
 
-    return render_template('admin.html', grouped_files=grouped_files)
+    return render_template('admin.html', grouped_files=grouped)
 
 
 if __name__ == '__main__':
