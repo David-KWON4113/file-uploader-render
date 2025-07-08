@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, url_for, render_template, send_from_directory, session
 import os
 from werkzeug.utils import secure_filename
+from collections import defaultdict
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'
@@ -41,11 +43,16 @@ def admin():
         return render_template('admin_login.html')
 
     files = os.listdir(app.config['UPLOAD_FOLDER'])
-    return render_template('admin.html', files=files)
+    files.sort(key=lambda f: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f)), reverse=True)
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+    grouped_files = defaultdict(list)
+    for f in files:
+        timestamp = os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f))
+        dt = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:00')
+        grouped_files[dt].append(f)
+
+    return render_template('admin.html', grouped_files=grouped_files)
+
 
 if __name__ == '__main__':
     app.run()
